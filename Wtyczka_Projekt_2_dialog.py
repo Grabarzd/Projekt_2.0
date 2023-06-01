@@ -68,8 +68,22 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
 
         elif self.checkBox_primary.isChecked():
             self.label_description_of_score.setText('Primary')
-
-
+            if self.radioButton_height.isChecked():
+                        # dla dwóch punktów
+                        #-----------------
+                        layer = iface.activeLayer()
+                        choosen = layer.selectedFeatures()
+                        attributes2 = choosen[1].attributes()
+                        attributes1 = choosen[0].attributes()
+                        h2 = attributes2[3]
+                        h1 = attributes1[3]
+                        h1=h1.replace(',','.')
+                        h2=h2.replace(',','.')
+                        delta_h = float(h2) - float(h1)
+                        self.label_description_of_score.setText('Przewyższenie między punktami wynosi:')
+                        self.label_score.setText(f'{delta_h:.3f}')
+                        iface.messageBar().pushMessage('Różnica wysokoci między punktami o numerach '+ str(attributes1[0])+ ' i '+ str(attributes2[0])+ f' wynosi {delta_h:.3f}.')
+                        #-----------------
         elif self.checkBox_additional.isChecked():
             self.label_description_of_score.setText('Additional')
 
@@ -91,7 +105,6 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
         #self.label_description_of_score.setText(str('Number of choosen elements:'))
         #iface.messageBar().pushInfo( 'Score', f'{number_of_selected_elements}' )
         #iface.messageBar().pushSuccess( 'Succes','Analiza zakończona sukcesem' )
-
 
 
 
