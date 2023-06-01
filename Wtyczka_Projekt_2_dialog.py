@@ -46,22 +46,56 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        self.pushButton_calculate.clicked.connect(self.count_selected_elements)
+        self.pushButton_calculate.clicked.connect(self.option)
         self.pushButton_clear.clicked.connect(self.clear)
+        
 
     def clear(self):
         self.label_score.setText('')
         self.label_description_of_score.setText('')
+        self.label_number_of_points.setText('')
         iface.messageBar().pushInfo('Clear','Console cleaning performed correctly')
 
-    def count_selected_elements(self):
-        #number_of_selected_elements=10
+    
+    def option(self):
+        if self.checkBox_primary.isChecked() and self.checkBox_additional.isChecked() and self.radioButton_pl1992.isChecked() and self.radioButton_height.isChecked() and self.radioButtona_ares.isChecked():
+            iface.messageBar().pushSuccess( 'Succes','https://www.youtube.com/shorts/O0vbnRJpsXU' )
+
+
+        elif self.checkBox_primary.isChecked() and self.checkBox_additional.isChecked() :
+            iface.messageBar().pushCritical( 'Error','Please choose only one option (not allowed to choose both)' )
+
+
+        elif self.checkBox_primary.isChecked():
+            self.label_description_of_score.setText('Primary')
+
+
+        elif self.checkBox_additional.isChecked():
+            self.label_description_of_score.setText('Additional')
+
+
+        else:
+            iface.messageBar().pushCritical( 'Error','Please choose one of the available options (Primary or Additional)')
+
         selected_features=self.mMapLayerComboBox_layers.currentLayer().selectedFeatures()
         number_of_selected_elements=len(selected_features)
-        self.label_score.setText(str(number_of_selected_elements))
-        self.label_description_of_score.setText(str('Number of choosen elements:'))
-        iface.messageBar().pushInfo( 'Score', f'{number_of_selected_elements}' )
-        #iface.messageBar().pushSuccess( 'Sukces','Analiza zakończona sukcesem' )
+        self.label_number_of_points.setText(str(number_of_selected_elements))
+
+
+
+    #def count_selected_elements(self):
+        #number_of_selected_elements=10
+        #selected_features=self.mMapLayerComboBox_layers.currentLayer().selectedFeatures()
+        #number_of_selected_elements=len(selected_features)
+        #self.label_score.setText(str(number_of_selected_elements))
+        #self.label_description_of_score.setText(str('Number of choosen elements:'))
+        #iface.messageBar().pushInfo( 'Score', f'{number_of_selected_elements}' )
+        #iface.messageBar().pushSuccess( 'Succes','Analiza zakończona sukcesem' )
+
+
+
+
+
         #iface.messageBar().pushWarning( 'Ostrzeżenie','Ta operacja może być niebezpieczna' )
         #iface.messageBar().pushCritical( 'Błąd','Wystąpił błąd' )
 

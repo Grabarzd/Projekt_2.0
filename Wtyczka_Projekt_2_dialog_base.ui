@@ -146,7 +146,7 @@
     </font>
    </property>
    <property name="title">
-    <string>Layer</string>
+    <string>Layer:</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
@@ -165,9 +165,9 @@
   <widget class="QGroupBox" name="groupBox_score">
    <property name="geometry">
     <rect>
-     <x>130</x>
+     <x>290</x>
      <y>260</y>
-     <width>501</width>
+     <width>341</width>
      <height>111</height>
     </rect>
    </property>
@@ -177,7 +177,7 @@
     </font>
    </property>
    <property name="title">
-    <string>Score</string>
+    <string>Score:</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
@@ -186,9 +186,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>20</y>
-      <width>481</width>
-      <height>41</height>
+      <y>30</y>
+      <width>321</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
@@ -202,8 +202,8 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>69</y>
-      <width>481</width>
+      <y>70</y>
+      <width>311</width>
       <height>31</height>
      </rect>
     </property>
@@ -417,29 +417,6 @@
     </property>
    </widget>
   </widget>
-  <widget class="QTextEdit" name="textEdit_descripion">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>20</y>
-     <width>301</width>
-     <height>61</height>
-    </rect>
-   </property>
-   <property name="cursor" stdset="0">
-    <cursorShape>ForbiddenCursor</cursorShape>
-   </property>
-   <property name="readOnly">
-    <bool>true</bool>
-   </property>
-   <property name="html">
-    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:9.75pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-   </property>
-  </widget>
   <widget class="QGroupBox" name="groupBox_layer_2">
    <property name="geometry">
     <rect>
@@ -487,6 +464,11 @@ p, li { white-space: pre-wrap; }
       <height>31</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
     <property name="text">
      <string>Primary</string>
     </property>
@@ -520,7 +502,7 @@ p, li { white-space: pre-wrap; }
     </font>
    </property>
    <property name="title">
-    <string>Units of area</string>
+    <string>Units of area:</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
@@ -577,6 +559,87 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="text">
      <string>Ares</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>259</y>
+     <width>141</width>
+     <height>111</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+    </font>
+   </property>
+   <property name="title">
+    <string>Number of points:</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <widget class="QLabel" name="label_number_of_points">
+    <property name="geometry">
+     <rect>
+      <x>4</x>
+      <y>25</y>
+      <width>131</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_3">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>0</y>
+     <width>301</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+    </font>
+   </property>
+   <property name="title">
+    <string>Description:</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <widget class="QTextEdit" name="textEdit_descripion">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>281</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="cursor" stdset="0">
+     <cursorShape>ForbiddenCursor</cursorShape>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+    <property name="html">
+     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9.75pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
   </widget>
