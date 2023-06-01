@@ -26,6 +26,10 @@ import os
 
 from qgis.PyQt import uic
 from qgis.PyQt import QtWidgets
+from qgis.utils import iface
+import numpy as np
+from qgis.core import QgsWkbTypes, QgsVectorLayer, QgsVectorFileWriter, QgsProject, Qgis
+
 
 # This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -42,13 +46,28 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        self.pushButton_1.clicked.connect(self.count_selected_elements)
- 
+        self.pushButton_calculate.clicked.connect(self.count_selected_elements)
+        self.pushButton_clear.clicked.connect(self.clear)
+
+    def clear(self):
+        self.label_score.setText('')
+        self.label_description_of_score.setText('')
+        iface.messageBar().pushInfo('Clear','Console cleaning performed correctly')
 
     def count_selected_elements(self):
         #number_of_selected_elements=10
         selected_features=self.mMapLayerComboBox_layers.currentLayer().selectedFeatures()
         number_of_selected_elements=len(selected_features)
         self.label_score.setText(str(number_of_selected_elements))
+        self.label_description_of_score.setText(str('Number of choosen elements:'))
+        iface.messageBar().pushInfo( 'Score', f'{number_of_selected_elements}' )
+        #iface.messageBar().pushSuccess( 'Sukces','Analiza zakończona sukcesem' )
+        #iface.messageBar().pushWarning( 'Ostrzeżenie','Ta operacja może być niebezpieczna' )
+        #iface.messageBar().pushCritical( 'Błąd','Wystąpił błąd' )
+
+
+
+
+   
     
     
