@@ -31,7 +31,13 @@ import numpy as np
 from qgis.core import QgsWkbTypes, QgsVectorLayer, QgsVectorFileWriter, QgsProject, Qgis
 from qgis.gui import QgsFileWidget
 from PyQt5.QtWidgets import QFileDialog
-
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QAction
+from qgis.core import QgsProject, QgsGeometry, QgsVectorLayer, QgsFeature, QgsField, QgsFields
+from qgis.core import QgsFeature, QgsGeometry, QgsProject
+from qgis.gui import QgsRubberBand
+from PyQt5.QtGui import QColor
+from qgis.core import QgsProject, QgsCoordinateTransform, QgsGeometry,QgsCoordinateReferenceSystem
 
 # This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -60,20 +66,37 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
         iface.messageBar().pushInfo('Clear','Console cleaning performed correctly')
 
     def add_file(self):
-        filepath = QFileDialog.getOpenFileName(self, 'Open file')[0]
-        self.textEdit_filepath_score.setText(f'{filepath}')
-        file=open(filepath,'r')
-        wiersze=file.readlines()
-        choosen=[]
-        for i in wiersze:
-                xyz=i.split(' ')
-                X=xyz[0]
-                Y=xyz[1]
-                Z=xyz[2]
-                if '\n' in Z:
-                    Z=Z[:-1]
-                choosen.append([float(X),float(Y),float(Z)])
+        if self.radioButton_txt.isChecked():
+            filepath = QFileDialog.getOpenFileName(self, 'Open file')[0]
+            self.textEdit_filepath_score.setText(f'{filepath}')
+            file=open(filepath,'r')
+            wiersze=file.readlines()
+            choosen=[]
+            for i in wiersze:
+                    xyz=i.split(' ')
+                    X=xyz[0]
+                    Y=xyz[1]
+                    Z=xyz[2]
+                    if '\n' in Z:
+                        Z=Z[:-1]
+                    choosen.append([float(X),float(Y),float(Z)])
+            iface.messageBar().pushInfo('Success',f'{choosen}')
 
+        elif self.radioButton_csv.isChecked():
+            filepath = QFileDialog.getOpenFileName(self, 'Open file')[0]
+            self.textEdit_filepath_score.setText(f'{filepath}')
+            file=open(filepath,'r')
+            wiersze=file.readlines()
+            choosen=[]
+            for i in wiersze[1:]:
+                    xyz=i.split(',')
+                    X=xyz[0]
+                    Y=xyz[1]
+                    Z=xyz[2]
+                    if '\n' in Z:
+                        Z=Z[:-1]
+                    choosen.append([float(X),float(Y),float(Z)])
+            iface.messageBar().pushInfo('Success',f'{choosen}')
 
 
     def option(self):
@@ -134,13 +157,74 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
                     msg.exec_()
 
 
+                if self.radioButton_system.isChecked():
+                    if self.radioButton_pl1992.isChecked():
+                        # Pobierz aktualnie zaznaczone obiekty z warstwy
+                        layer = iface.activeLayer()
+                        selected_features = layer.selectedFeatures()
 
-            if self.radioButton_pl1992.isChecked():
-                s=1
-                
-            elif self.radioButton_pl2000.isChecked():
-                #QgsProject.instance().setCrs(QgsCoordinateReferenceSystem('EPSG:2180'))
-                s=1
+                        # Nowy EPSG kod układu odniesienia
+                        new_epsg_code = 2180
+
+                        # Pobierz transformację współrzędnych z obecnego układu odniesienia do nowego
+                        crs_src = layer.crs()
+                        crs_dst = QgsCoordinateReferenceSystem(f'EPSG:{new_epsg_code}')
+                        transform_context = QgsProject.instance().transformContext()
+                        coord_transform = QgsCoordinateTransform(crs_src, crs_dst, transform_context)
+
+                        # Zmiana układu odniesienia dla zaznaczonych elementów
+                        layer.startEditing()
+                        for feature in selected_features:
+                            geometry = feature.geometry()
+                            geometry.transform(coord_transform)
+                            layer.changeGeometry(feature, geometry)
+                        layer.commitChanges()
+
+                    elif self.radioButton_pl2000.isChecked():
+                        #QgsProject.instance().setCrs(QgsCoordinateReferenceSystem('EPSG:2180'))
+                        s=1
+
+
+
+
+            if self.radioButton_polygon.isChecked():
+                # Pobierz aktualnie zaznaczone obiekty
+                selected_features = iface.activeLayer().selectedFeatures()
+
+                # Stwórz nową warstwę
+                new_layer = QgsVectorLayer("Polygon?crs=epsg:2180", "New Layer", "memory")
+                provider = new_layer.dataProvider()
+                fields = provider.fields()
+                new_layer.startEditing()
+
+                # Stwórz poligon na podstawie zaznaczonych punktów
+                polygon_points = []
+                for feature in selected_features:
+                    geom = feature.geometry()
+                    polygon_points.append(geom.asPoint())
+
+                polygon = QgsGeometry.fromPolygonXY([polygon_points])
+
+                # Dodaj poligon do warstwy
+                new_feature = QgsFeature()
+                new_feature.setGeometry(polygon)
+                new_layer.addFeature(new_feature)
+
+                # Zakończ edycję i dodaj nową warstwę do projektu
+                new_layer.commitChanges()
+                QgsProject.instance().addMapLayer(new_layer)
+
+                # Narysuj poligon na widoku mapy
+                rubber_band = QgsRubberBand(iface.mapCanvas())
+                rubber_band.setToGeometry(polygon, None)
+                rubber_band.setColor(QColor(255, 0, 0, 100))  # Ustaw kolor i przezroczystość poligonu
+                rubber_band.setWidth(1)
+                rubber_band.show()
+            
+            
+            
+            
+            
 
 
 
@@ -148,3 +232,15 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
             selected_features=self.mMapLayerComboBox_layers.currentLayer().selectedFeatures()
             number_of_selected_elements=len(selected_features)
             self.label_number_of_points.setText(str(number_of_selected_elements))
+
+
+
+
+
+
+
+
+
+
+
+

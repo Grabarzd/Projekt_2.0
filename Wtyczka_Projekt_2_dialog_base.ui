@@ -6,9 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>861</width>
-    <height>440</height>
+    <width>1007</width>
+    <height>438</height>
    </rect>
+  </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
@@ -288,7 +291,7 @@
      <string>Create polygon</string>
     </property>
    </widget>
-   <widget class="QRadioButton" name="radioButton_layer">
+   <widget class="QRadioButton" name="radioButton_system">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -303,7 +306,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Create layer</string>
+     <string>Change coordinate system</string>
     </property>
    </widget>
   </widget>
@@ -488,7 +491,7 @@ p, li { white-space: pre-wrap; }
   <widget class="QPushButton" name="pushButton_calculate">
    <property name="geometry">
     <rect>
-     <x>580</x>
+     <x>730</x>
      <y>400</y>
      <width>151</width>
      <height>31</height>
@@ -501,7 +504,7 @@ p, li { white-space: pre-wrap; }
   <widget class="QPushButton" name="pushButton_clear">
    <property name="geometry">
     <rect>
-     <x>740</x>
+     <x>890</x>
      <y>400</y>
      <width>111</width>
      <height>31</height>
@@ -572,7 +575,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9.75pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QRadioButton" name="radioButton_area_2">
+   <widget class="QRadioButton" name="radioButton_csv">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -590,7 +593,7 @@ p, li { white-space: pre-wrap; }
      <string>.CSV</string>
     </property>
    </widget>
-   <widget class="QRadioButton" name="radioButton_polygon_2">
+   <widget class="QRadioButton" name="radioButton_txt">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -614,10 +617,163 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>640</x>
      <y>10</y>
-     <width>211</width>
+     <width>361</width>
      <height>381</height>
     </rect>
    </property>
+   <property name="tabletTracking">
+    <bool>false</bool>
+   </property>
+   <property name="acceptDrops">
+    <bool>true</bool>
+   </property>
+   <property name="inputMethodHints">
+    <set>Qt::ImhNone</set>
+   </property>
+   <property name="editTriggers">
+    <set>QAbstractItemView::AllEditTriggers</set>
+   </property>
+   <property name="dragEnabled">
+    <bool>false</bool>
+   </property>
+   <attribute name="horizontalHeaderVisible">
+    <bool>true</bool>
+   </attribute>
+   <attribute name="horizontalHeaderCascadingSectionResizes">
+    <bool>false</bool>
+   </attribute>
+   <attribute name="horizontalHeaderMinimumSectionSize">
+    <number>23</number>
+   </attribute>
+   <attribute name="horizontalHeaderDefaultSectionSize">
+    <number>85</number>
+   </attribute>
+   <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+    <bool>false</bool>
+   </attribute>
+   <attribute name="verticalHeaderDefaultSectionSize">
+    <number>23</number>
+   </attribute>
+   <row>
+    <property name="text">
+     <string>1</string>
+    </property>
+   </row>
+   <row>
+    <property name="text">
+     <string>2</string>
+    </property>
+   </row>
+   <row>
+    <property name="text">
+     <string>3</string>
+    </property>
+   </row>
+   <row>
+    <property name="text">
+     <string>4</string>
+    </property>
+   </row>
+   <column>
+    <property name="text">
+     <string>Name of point</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>X</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Y</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Z</string>
+    </property>
+   </column>
+   <item row="0" column="0">
+    <property name="text">
+     <string>1</string>
+    </property>
+   </item>
+   <item row="0" column="1">
+    <property name="text">
+     <string>1</string>
+    </property>
+   </item>
+   <item row="0" column="2">
+    <property name="text">
+     <string>1</string>
+    </property>
+   </item>
+   <item row="0" column="3">
+    <property name="text">
+     <string>1</string>
+    </property>
+   </item>
+   <item row="1" column="0">
+    <property name="text">
+     <string>2</string>
+    </property>
+   </item>
+   <item row="1" column="1">
+    <property name="text">
+     <string>2</string>
+    </property>
+   </item>
+   <item row="1" column="2">
+    <property name="text">
+     <string>2</string>
+    </property>
+   </item>
+   <item row="1" column="3">
+    <property name="text">
+     <string>2</string>
+    </property>
+   </item>
+   <item row="2" column="0">
+    <property name="text">
+     <string>3</string>
+    </property>
+   </item>
+   <item row="2" column="1">
+    <property name="text">
+     <string>3</string>
+    </property>
+   </item>
+   <item row="2" column="2">
+    <property name="text">
+     <string>3</string>
+    </property>
+   </item>
+   <item row="2" column="3">
+    <property name="text">
+     <string>3</string>
+    </property>
+   </item>
+   <item row="3" column="0">
+    <property name="text">
+     <string>4</string>
+    </property>
+   </item>
+   <item row="3" column="1">
+    <property name="text">
+     <string>4</string>
+    </property>
+   </item>
+   <item row="3" column="2">
+    <property name="text">
+     <string>4</string>
+    </property>
+   </item>
+   <item row="3" column="3">
+    <property name="text">
+     <string>4</string>
+    </property>
+   </item>
   </widget>
  </widget>
  <customwidgets>
