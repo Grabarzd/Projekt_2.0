@@ -74,26 +74,37 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
             msg.setInformativeText('Please choose only one option (not allowed to choose both)')
             msg.exec_()
 
+
+
+
+
         elif self.checkBox_primary.isChecked():
             self.label_description_of_score.setText('Score in')
             if self.radioButton_height.isChecked():
-                        # układa punkty w kolejności takiej samej jak id w tabeli atrybutów
-                        layer = iface.activeLayer()
-                        choosen = layer.selectedFeatures()
-                        i=1
-                        if len(choosen)==0 or len(choosen)==1:
-                                iface.messageBar().pushMessage('Please choose more points')   
-                                msg = QtWidgets.QMessageBox()
-                                msg.setIcon(QtWidgets.QMessageBox.Critical)
-                                msg.setText("                     Error                    ")
-                                msg.setInformativeText('Option requires at least two points')
-                                msg.exec_()
-                        else:
-                            while i<=(len(choosen)-1):
-                                delta_h=float((choosen[i].attributes())[3])-float((choosen[0].attributes())[3])
-                                iface.messageBar().pushMessage(f'Różnica wysokosci pomiędzy punktami {choosen[0].attributes()[0]} oraz {choosen[i].attributes()[0]} wynosi {delta_h:.3f}')
-                                i=i+1
-                            iface.messageBar().pushSuccess( 'Succes','Action performed successfully' )
+                # układa punkty w kolejności takiej samej jak id w tabeli atrybutów
+                layer = iface.activeLayer()
+                choosen = layer.selectedFeatures()
+                i=1
+                if len(choosen)==0 or len(choosen)==1:
+                        iface.messageBar().pushMessage('Please choose more points')   
+                        msg = QtWidgets.QMessageBox()
+                        msg.setIcon(QtWidgets.QMessageBox.Critical)
+                        msg.setText("                     Error                    ")
+                        msg.setInformativeText('Option requires at least two points')
+                        msg.exec_()
+                else:
+                    while i<=(len(choosen)-1):
+                        delta_h=float((choosen[i].attributes())[3])-float((choosen[0].attributes())[3])
+                        iface.messageBar().pushMessage(f'Różnica wysokosci pomiędzy punktami {choosen[0].attributes()[0]} oraz {choosen[i].attributes()[0]} wynosi {delta_h:.3f}')
+                        i=i+1
+                    iface.messageBar().pushSuccess( 'Succes','Action performed successfully' )
+                self.label_score.setText('Result is in the command line') 
+
+
+
+
+
+
             elif self.radioButton_area.isChecked():
                 layer = iface.activeLayer()
                 choosen = layer.selectedFeatures()
@@ -127,6 +138,9 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
                     msg.setText("                     Error                    ")
                     msg.setInformativeText('You have to select units of area!!!')
                     msg.exec_()
+
+
+
 
 
 
