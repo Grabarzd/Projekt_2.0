@@ -75,7 +75,7 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
             msg.exec_()
 
         elif self.checkBox_primary.isChecked():
-            self.label_description_of_score.setText('Primary')
+            self.label_description_of_score.setText('Score in')
             if self.radioButton_height.isChecked():
                         # układa punkty w kolejności takiej samej jak id w tabeli atrybutów
                         layer = iface.activeLayer()
@@ -105,34 +105,38 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
                         area=area+(float((choosen[1].attributes())[1])-last_x)*float((choosen[0].attributes())[2])
                     elif choosen[i]==choosen[-1]:
                         first_x=float((choosen[0].attributes())[1])
-                        area=area+(first_x-float((choosen[-2].attributes())[2]))*float((choosen[-1].attributes())[2])
+                        area=area+(first_x-float((choosen[-1].attributes())[2]))*float((choosen[-1].attributes())[2])
                     else:
                         delta_x=float((choosen[i+1].attributes())[1])-float((choosen[i-1].attributes())[1])
                         area=area+delta_x*float((choosen[i].attributes())[2])
                     i=i+1
                     if area<0:
                         area=area*-1
-                print(area/2)
-                self.label_score.setText(f'Area of the designated area is {area:.3f}')
-
-
+                    self.label_description_of_score.setText('Area of the designated area is')
+                if self.radioButtona_meters.isChecked():
+                    self.label_score.setText(f'{(area/2):.3f} m')
+                elif self.radioButtona_ares.isChecked():
+                    self.label_score.setText(f'{(area/200):.2f} a')
+                elif self.radioButtona_hectares.isChecked():
+                    self.label_score.setText(f'{(area/20000):.4f} ha')
+                else:
+                    self.label_description_of_score.setText('')
+                    self.label_score.setText('')
+                    msg = QtWidgets.QMessageBox()
+                    msg.setIcon(QtWidgets.QMessageBox.Critical)
+                    msg.setText("                     Error                    ")
+                    msg.setInformativeText('You have to select units of area!!!')
+                    msg.exec_()
 
 
 
         elif self.checkBox_additional.isChecked():
-            self.label_description_of_score.setText('Additional')
             if self.radioButton_pl1992.isChecked():
                  s=1
                 #QgsProject.instance().setCrs(QgsCoordinateReferenceSystem('EPSG:2180'))
             elif self.radioButton_pl2000.isChecked():
                 #QgsProject.instance().setCrs(QgsCoordinateReferenceSystem('EPSG:2180'))
-                msg = QtWidgets.QMessageBox()
-                msg.setIcon(QtWidgets.QMessageBox.Information)
-                msg.setText("                     Choose                    ")
-                msg.ActionRole()
-                msg.AcceptRole()
-                msg.setInformativeText('Option requires at least two points')
-                msg.exec_()
+                s=1
 
         else:
             msg = QtWidgets.QMessageBox()
@@ -140,7 +144,6 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
             msg.setText("                     Error                    ")
             msg.setInformativeText('Please choose one of the available options (Primary or Additional)')
             msg.exec_()
-
         selected_features=self.mMapLayerComboBox_layers.currentLayer().selectedFeatures()
         number_of_selected_elements=len(selected_features)
         self.label_number_of_points.setText(str(number_of_selected_elements))
@@ -155,26 +158,5 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
         #self.label_description_of_score.setText(str('Number of choosen elements:'))
         #iface.messageBar().pushInfo( 'Score', f'{number_of_selected_elements}' )
         #iface.messageBar().pushSuccess( 'Succes','Analiza zakończona sukcesem' )
-
-
-
-
         #iface.messageBar().pushWarning( 'Ostrzeżenie','Ta operacja może być niebezpieczna' )
         #iface.messageBar().pushCritical( 'Błąd','Wystąpił błąd' )
-
-
-
-                        #if len(choosen)==2:
-                         #   attributes2 = choosen[1].attributes()
-                         #   attributes1 = choosen[0].attributes()
-                         #   h2 = attributes2[3]
-                         #   h1 = attributes1[3]
-                         #   h1=h1.replace(',','.')
-                         ##   h2=h2.replace(',','.')
-                         #   delta_h = float(h2) - float(h1)
-                         #   self.label_description_of_score.setText('Przewyższenie między punktami wynosi:')
-                         #   self.label_score.setText(f'{delta_h:.3f}')
-                         #   iface.messageBar().pushMessage('Różnica wysokoci między punktami o numerach '+ str(attributes1[0])+ ' i '+ str(attributes2[0])+ f' wynosi {delta_h:.3f}.')
-   
-    
-    
