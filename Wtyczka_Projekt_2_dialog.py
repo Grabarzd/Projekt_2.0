@@ -30,7 +30,6 @@ from qgis.utils import iface
 import numpy as np
 from qgis.core import QgsWkbTypes, QgsVectorLayer, QgsVectorFileWriter, QgsProject, Qgis
 
-
 # This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'Wtyczka_Projekt_2_dialog_base.ui'))
@@ -56,40 +55,91 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
         self.label_number_of_points.setText('')
         iface.messageBar().pushInfo('Clear','Console cleaning performed correctly')
 
-    
     def option(self):
         if self.checkBox_primary.isChecked() and self.checkBox_additional.isChecked() and self.radioButton_pl1992.isChecked() and self.radioButton_height.isChecked() and self.radioButtona_ares.isChecked():
             iface.messageBar().pushSuccess( 'Succes','https://www.youtube.com/shorts/O0vbnRJpsXU' )
 
+            msg = QtWidgets.QMessageBox()
+            msg.setIcon(QtWidgets.QMessageBox.Information)
+            msg.setText("                     You found a easteregg                    ")
+            msg.setInformativeText('https://www.youtube.com/shorts/O0vbnRJpsXU')
+            msg.setWindowTitle("Success")
+            msg.exec_()
 
         elif self.checkBox_primary.isChecked() and self.checkBox_additional.isChecked() :
             iface.messageBar().pushCritical( 'Error','Please choose only one option (not allowed to choose both)' )
-
+            msg = QtWidgets.QMessageBox()
+            msg.setIcon(QtWidgets.QMessageBox.Critical)
+            msg.setText("                     Error                    ")
+            msg.setInformativeText('Please choose only one option (not allowed to choose both)')
+            msg.exec_()
 
         elif self.checkBox_primary.isChecked():
             self.label_description_of_score.setText('Primary')
             if self.radioButton_height.isChecked():
-                        # dla dwóch punktów
-                        #-----------------
+                        # układa punkty w kolejności takiej samej jak id w tabeli atrybutów
                         layer = iface.activeLayer()
                         choosen = layer.selectedFeatures()
-                        attributes2 = choosen[1].attributes()
-                        attributes1 = choosen[0].attributes()
-                        h2 = attributes2[3]
-                        h1 = attributes1[3]
-                        h1=h1.replace(',','.')
-                        h2=h2.replace(',','.')
-                        delta_h = float(h2) - float(h1)
-                        self.label_description_of_score.setText('Przewyższenie między punktami wynosi:')
-                        self.label_score.setText(f'{delta_h:.3f}')
-                        iface.messageBar().pushMessage('Różnica wysokoci między punktami o numerach '+ str(attributes1[0])+ ' i '+ str(attributes2[0])+ f' wynosi {delta_h:.3f}.')
-                        #-----------------
+                        i=1
+                        if len(choosen)==0 or len(choosen)==1:
+                                iface.messageBar().pushMessage('Please choose more points')   
+                                msg = QtWidgets.QMessageBox()
+                                msg.setIcon(QtWidgets.QMessageBox.Critical)
+                                msg.setText("                     Error                    ")
+                                msg.setInformativeText('Option requires at least two points')
+                                msg.exec_()
+                        else:
+                            while i<=(len(choosen)-1):
+                                delta_h=float((choosen[i].attributes())[3])-float((choosen[0].attributes())[3])
+                                iface.messageBar().pushMessage(f'Różnica wysokosci pomiędzy punktami {choosen[0].attributes()[0]} oraz {choosen[i].attributes()[0]} wynosi {delta_h:.3f}')
+                                i=i+1
+                            iface.messageBar().pushSuccess( 'Succes','Action performed successfully' )
+            elif self.radioButton_area.isChecked():
+                layer = iface.activeLayer()
+                choosen = layer.selectedFeatures()
+                area=0
+                i=0
+                while i<=(len(choosen)-1):
+                    if float((choosen[i].attributes())[0])==float((choosen[0].attributes())[1]):
+                        last_x=float((choosen[-1].attributes())[1])
+                        area=area+(float((choosen[1].attributes())[1])-last_x)*float((choosen[0].attributes())[2])
+                    elif choosen[i]==choosen[-1]:
+                        first_x=float((choosen[0].attributes())[1])
+                        area=area+(first_x-float((choosen[-2].attributes())[2]))*float((choosen[-1].attributes())[2])
+                    else:
+                        delta_x=float((choosen[i+1].attributes())[1])-float((choosen[i-1].attributes())[1])
+                        area=area+delta_x*float((choosen[i].attributes())[2])
+                    i=i+1
+                    if area<0:
+                        area=area*-1
+                print(area/2)
+                self.label_score.setText(f'Area of the designated area is {area:.3f}')
+
+
+
+
+
         elif self.checkBox_additional.isChecked():
             self.label_description_of_score.setText('Additional')
-
+            if self.radioButton_pl1992.isChecked():
+                 s=1
+                #QgsProject.instance().setCrs(QgsCoordinateReferenceSystem('EPSG:2180'))
+            elif self.radioButton_pl2000.isChecked():
+                #QgsProject.instance().setCrs(QgsCoordinateReferenceSystem('EPSG:2180'))
+                msg = QtWidgets.QMessageBox()
+                msg.setIcon(QtWidgets.QMessageBox.Information)
+                msg.setText("                     Choose                    ")
+                msg.ActionRole()
+                msg.AcceptRole()
+                msg.setInformativeText('Option requires at least two points')
+                msg.exec_()
 
         else:
-            iface.messageBar().pushCritical( 'Error','Please choose one of the available options (Primary or Additional)')
+            msg = QtWidgets.QMessageBox()
+            msg.setIcon(QtWidgets.QMessageBox.Critical)
+            msg.setText("                     Error                    ")
+            msg.setInformativeText('Please choose one of the available options (Primary or Additional)')
+            msg.exec_()
 
         selected_features=self.mMapLayerComboBox_layers.currentLayer().selectedFeatures()
         number_of_selected_elements=len(selected_features)
@@ -114,7 +164,17 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
 
 
 
-
+                        #if len(choosen)==2:
+                         #   attributes2 = choosen[1].attributes()
+                         #   attributes1 = choosen[0].attributes()
+                         #   h2 = attributes2[3]
+                         #   h1 = attributes1[3]
+                         #   h1=h1.replace(',','.')
+                         ##   h2=h2.replace(',','.')
+                         #   delta_h = float(h2) - float(h1)
+                         #   self.label_description_of_score.setText('Przewyższenie między punktami wynosi:')
+                         #   self.label_score.setText(f'{delta_h:.3f}')
+                         #   iface.messageBar().pushMessage('Różnica wysokoci między punktami o numerach '+ str(attributes1[0])+ ' i '+ str(attributes2[0])+ f' wynosi {delta_h:.3f}.')
    
     
     
