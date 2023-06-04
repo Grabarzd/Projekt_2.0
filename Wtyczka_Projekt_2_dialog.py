@@ -29,6 +29,9 @@ from qgis.PyQt import QtWidgets
 from qgis.utils import iface
 import numpy as np
 from qgis.core import QgsWkbTypes, QgsVectorLayer, QgsVectorFileWriter, QgsProject, Qgis
+from qgis.gui import QgsFileWidget
+from PyQt5.QtWidgets import QFileDialog
+
 
 # This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -47,7 +50,8 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
         self.setupUi(self)
         self.pushButton_calculate.clicked.connect(self.option)
         self.pushButton_clear.clicked.connect(self.clear)
-        
+        self.pushButton_add_file.clicked.connect(self.add_file)
+
 
     def clear(self):
         self.label_score.setText('')
@@ -55,31 +59,24 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
         self.label_number_of_points.setText('')
         iface.messageBar().pushInfo('Clear','Console cleaning performed correctly')
 
+    def add_file(self):
+        filepath = QFileDialog.getOpenFileName(self, 'Open file')[0]
+        self.textEdit_filepath_score.setText(f'{filepath}')
+        file=open(filepath,'r')
+        wiersze=file.readlines()
+        choosen=[]
+        for i in wiersze:
+                xyz=i.split(' ')
+                X=xyz[0]
+                Y=xyz[1]
+                Z=xyz[2]
+                if '\n' in Z:
+                    Z=Z[:-1]
+                choosen.append([float(X),float(Y),float(Z)])
+
+
+
     def option(self):
-        if self.checkBox_primary.isChecked() and self.checkBox_additional.isChecked() and self.radioButton_pl1992.isChecked() and self.radioButton_height.isChecked() and self.radioButtona_ares.isChecked():
-            iface.messageBar().pushSuccess( 'Succes','https://www.youtube.com/shorts/O0vbnRJpsXU' )
-
-            msg = QtWidgets.QMessageBox()
-            msg.setIcon(QtWidgets.QMessageBox.Information)
-            msg.setText("                     You found a easteregg                    ")
-            msg.setInformativeText('https://www.youtube.com/shorts/O0vbnRJpsXU')
-            msg.setWindowTitle("Success")
-            msg.exec_()
-
-        elif self.checkBox_primary.isChecked() and self.checkBox_additional.isChecked() :
-            iface.messageBar().pushCritical( 'Error','Please choose only one option (not allowed to choose both)' )
-            msg = QtWidgets.QMessageBox()
-            msg.setIcon(QtWidgets.QMessageBox.Critical)
-            msg.setText("                     Error                    ")
-            msg.setInformativeText('Please choose only one option (not allowed to choose both)')
-            msg.exec_()
-
-
-
-
-
-        elif self.checkBox_primary.isChecked():
-            self.label_description_of_score.setText('Score in')
             if self.radioButton_height.isChecked():
                 # układa punkty w kolejności takiej samej jak id w tabeli atrybutów
                 layer = iface.activeLayer()
@@ -99,9 +96,6 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
                         i=i+1
                     iface.messageBar().pushSuccess( 'Succes','Action performed successfully' )
                 self.label_score.setText('Result is in the command line') 
-
-
-
 
 
 
@@ -141,36 +135,16 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
 
 
 
-
-
-
-        elif self.checkBox_additional.isChecked():
             if self.radioButton_pl1992.isChecked():
-                 s=1
-                #QgsProject.instance().setCrs(QgsCoordinateReferenceSystem('EPSG:2180'))
+                s=1
+                
             elif self.radioButton_pl2000.isChecked():
                 #QgsProject.instance().setCrs(QgsCoordinateReferenceSystem('EPSG:2180'))
                 s=1
 
-        else:
-            msg = QtWidgets.QMessageBox()
-            msg.setIcon(QtWidgets.QMessageBox.Critical)
-            msg.setText("                     Error                    ")
-            msg.setInformativeText('Please choose one of the available options (Primary or Additional)')
-            msg.exec_()
-        selected_features=self.mMapLayerComboBox_layers.currentLayer().selectedFeatures()
-        number_of_selected_elements=len(selected_features)
-        self.label_number_of_points.setText(str(number_of_selected_elements))
 
 
-
-    #def count_selected_elements(self):
-        #number_of_selected_elements=10
-        #selected_features=self.mMapLayerComboBox_layers.currentLayer().selectedFeatures()
-        #number_of_selected_elements=len(selected_features)
-        #self.label_score.setText(str(number_of_selected_elements))
-        #self.label_description_of_score.setText(str('Number of choosen elements:'))
-        #iface.messageBar().pushInfo( 'Score', f'{number_of_selected_elements}' )
-        #iface.messageBar().pushSuccess( 'Succes','Analiza zakończona sukcesem' )
-        #iface.messageBar().pushWarning( 'Ostrzeżenie','Ta operacja może być niebezpieczna' )
-        #iface.messageBar().pushCritical( 'Błąd','Wystąpił błąd' )
+                
+            selected_features=self.mMapLayerComboBox_layers.currentLayer().selectedFeatures()
+            number_of_selected_elements=len(selected_features)
+            self.label_number_of_points.setText(str(number_of_selected_elements))
