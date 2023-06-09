@@ -27,26 +27,14 @@ import os
 from qgis.PyQt import uic
 from qgis.PyQt import QtWidgets
 from qgis.utils import iface
-import numpy as np
-from qgis.core import QgsWkbTypes, QgsVectorLayer, QgsVectorFileWriter, QgsProject, Qgis
-from qgis.gui import QgsFileWidget
 from PyQt5.QtWidgets import QFileDialog
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QAction
-from qgis.core import QgsProject, QgsGeometry, QgsVectorLayer, QgsFeature, QgsField, QgsFields
-from qgis.core import QgsFeature, QgsGeometry, QgsProject
-from qgis.gui import QgsRubberBand
 from PyQt5.QtGui import QColor
-from qgis.core import QgsProject, QgsCoordinateTransform, QgsGeometry,QgsCoordinateReferenceSystem
-from qgis.core import QgsProject, QgsPoint, QgsGeometry, QgsVectorLayer, QgsFeature, QgsField, QgsFields
+from qgis.core import QgsProject, QgsGeometry, QgsVectorLayer, QgsFeature, QgsField, QgsFields, QgsPointXY, QgsCoordinateTransform, QgsCoordinateReferenceSystem
 from PyQt5.QtCore import QVariant
-from PyQt5.QtCore import QVariant
-from qgis.core import QgsVectorLayer, QgsFields, QgsField, QgsFeature, QgsGeometry, QgsPoint, QgsProject
 import csv
-from qgis.core import QgsVectorLayer, QgsVectorDataProvider, QgsFields, QgsField, QgsPoint, QgsFeature
-import csv
-from qgis.core import QgsVectorLayer, QgsFields, QgsField, QgsPointXY, QgsFeature
-
+from qgis.gui import QgsVertexMarker
 
 # This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -67,9 +55,9 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
         self.pushButton_clear.clicked.connect(self.clear)
         self.pushButton_add_file.clicked.connect(self.add_file)
         self.pushButton_add_table.clicked.connect(self.table)
-
-
+        
     def table(self):
+        
         self.tableWidget.setColumnWidth(0,100)
         self.tableWidget.setColumnWidth(1,100)
         self.tableWidget.setColumnWidth(2,100)
@@ -77,11 +65,14 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
         self.tableWidget.setHorizontalHeaderLabels(['Number','X','Y','Z'])
         layer = self.mMapLayerComboBox_layers.currentLayer()
         choosen = layer.selectedFeatures()
+        choosen = sorted(choosen, key=lambda f: f['id'])
+        self.tableWidget.setRowCount(len(choosen)+12)
+        self.tableWidget.setColumnCount(4)
         i=0
-        while i<(len(choosen)-1):
+        while i<(len(choosen)):
             id=str((choosen[i].attributes())[0])
-            X=str((choosen[i].attributes())[1])
-            Y=str((choosen[i].attributes())[2])
+            Y=str((choosen[i].attributes())[1])
+            X=str((choosen[i].attributes())[2])
             Z=str((choosen[i].attributes())[3])
             self.tableWidget.setItem(i,0,QtWidgets.QTableWidgetItem(id))
             self.tableWidget.setItem(i,1,QtWidgets.QTableWidgetItem(X))
@@ -89,186 +80,180 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
             self.tableWidget.setItem(i,3,QtWidgets.QTableWidgetItem(Z))
             i=i+1
 
-
     def clear(self):
         self.label_score.setText('')
         self.label_description_of_score.setText('')
         self.label_number_of_points.setText('')
+        self.label_filepath.setText('')
+        i=0
+        while i<19:
+            empty=''
+            self.tableWidget.setItem(i,0,QtWidgets.QTableWidgetItem(empty))
+            self.tableWidget.setItem(i,1,QtWidgets.QTableWidgetItem(empty))
+            self.tableWidget.setItem(i,2,QtWidgets.QTableWidgetItem(empty))
+            self.tableWidget.setItem(i,3,QtWidgets.QTableWidgetItem(empty))
+            i=i+1
         iface.messageBar().pushInfo('Clear','Console cleaning performed correctly')
 
     def add_file(self):
-        if self.radioButton_txt.isChecked():
-            file_path = QFileDialog.getOpenFileName(self, 'Open file')[0]
-            self.textEdit_filepath_score.setText(f'{file_path}')
-            # Tworzenie nowej warstwy
-            layer_name = 'Punkty'
-            crs = 'EPSG:4326'  # System odniesienia przestrzennego (EPSG:4326 dla WGS84)
-            fields = QgsFields()
-            fields.append(QgsField('ID', QVariant.Double))
-            fields.append(QgsField('X', QVariant.Double))
-            fields.append(QgsField('Y', QVariant.Double))   
-            fields.append(QgsField('Z', QVariant.Double))
-            layer = QgsVectorLayer('Point?crs=' + crs, layer_name, 'memory')
-            provider = layer.dataProvider()
-            provider.addAttributes(fields)
-            layer.updateFields()
+        if self.mRasterBandComboBox_systems.currentText()=='PL1992':
+            crs='EPSG:2180'
+        elif self.mRasterBandComboBox_systems.currentText()=='PL2000 - Zone 5':
+            crs='EPSG:2176'
+        elif self.mRasterBandComboBox_systems.currentText()=='PL2000 - Zone 6':
+            crs='EPSG:2177'
+        elif self.mRasterBandComboBox_systems.currentText()=='PL2000 - Zone 7':
+            crs='EPSG:2178'
+        elif self.mRasterBandComboBox_systems.currentText()=='PL2000 - Zone 8':
+            crs='EPSG:2179'
+        file_path = QFileDialog.getOpenFileName(self, 'Open file')[0]
+        self.label_filepath.setText(f'{file_path}')
+        layer_name = 'Punkty'
+        fields = QgsFields()
+        fields.append(QgsField('ID', QVariant.Double))
+        fields.append(QgsField('X', QVariant.Double))
+        fields.append(QgsField('Y', QVariant.Double))   
+        fields.append(QgsField('Z', QVariant.Double))
+        layer = QgsVectorLayer('Point?crs=' + crs, layer_name, 'memory')
+        provider = layer.dataProvider()
+        provider.addAttributes(fields)
+        layer.updateFields()
+        self.label_filepath.setText('Choosen filepath:')
+        self.label_filepath_2.setText(f'{file_path}')
 
-            # Odczyt danych z pliku i tworzenie obiektów punktowych
+        if self.radioButton_txt.isChecked():
             with open(file_path, 'r') as file:
                 csv_reader = csv.reader(file, delimiter=' ')
-                next(csv_reader)  # Pominięcie nagłówka, jeśli istnieje
+                next(csv_reader)
                 i=0
                 for row in csv_reader:
-                    x = float(row[0])
-                    y = float(row[1])
+                    y = float(row[0])
+                    x = float(row[1])
                     z = float(row[2])
                     i=i+1
-                    # Tworzenie obiektu punktu
-                    
                     point = QgsPointXY(x, y)
                     feature = QgsFeature()
                     feature.setGeometry(QgsGeometry.fromPointXY(point))
-
-                    feature.setAttributes([i,x, y, z])
-
-                    # Dodawanie obiektu punktu do warstwy
+                    feature.setAttributes([str(i),x, y, z])
                     provider.addFeature(feature)
-
-            # Zapisywanie warstwy do projektu QGIS
-            layer.updateExtents()
-            QgsProject.instance().addMapLayer(layer)
-
+        elif self.radioButton_csv.isChecked():
+            with open(file_path, 'r') as file:
+                csv_reader = csv.reader(file, delimiter=',')
+                next(csv_reader)
+                for row in csv_reader:
+                    if len(row) >= 4:
+                        id = row[0]
+                        y = float(row[1])
+                        x = float(row[2])
+                        z = float(row[3])
+                        point = QgsPointXY(x, y)
+                        feature = QgsFeature()
+                        feature.setGeometry(QgsGeometry.fromPointXY(point))
+                        feature.setAttributes([str(id), x, y, z])
+                        provider.addFeature(feature)
+        layer.updateExtents()
+        QgsProject.instance().addMapLayer(layer)
+        iface.messageBar().pushSuccess( 'Succes:',f'Added file {file_path}' )
 
     def option(self):
-
-            if self.radioButton_height.isChecked():
-                # układa punkty w kolejności takiej samej jak id w tabeli atrybutów
-                layer = iface.activeLayer()
-                choosen = layer.selectedFeatures()
-                i=1
-                if len(choosen)==0 or len(choosen)==1:
-                        iface.messageBar().pushMessage('Please choose more points')   
-                        msg = QtWidgets.QMessageBox()
-                        msg.setIcon(QtWidgets.QMessageBox.Critical)
-                        msg.setText("                     Error                    ")
-                        msg.setInformativeText('Option requires at least two points')
-                        msg.exec_()
-                else:
-                    while i<=(len(choosen)-1):
-                        delta_h=float((choosen[i].attributes())[3])-float((choosen[0].attributes())[3])
-                        iface.messageBar().pushMessage(f'Różnica wysokosci pomiędzy punktami {choosen[0].attributes()[0]} oraz {choosen[i].attributes()[0]} wynosi {delta_h:.3f}')
-                        i=i+1
-                    iface.messageBar().pushSuccess( 'Succes','Action performed successfully' )
-                self.label_score.setText('Result is in the command line') 
-
-
-
-            elif self.radioButton_area.isChecked():
-                layer = iface.activeLayer()
-                choosen = layer.selectedFeatures()
-                area=0
-                i=0
-                if len(choosen)<3:
+        if self.radioButton_height.isChecked():
+            layer = iface.activeLayer()
+            choosen = layer.selectedFeatures()
+            choosen = sorted(choosen, key=lambda f: f['id'])
+            i=0
+            if len(choosen)==0 or len(choosen)==1:
                     iface.messageBar().pushMessage('Please choose more points')   
                     msg = QtWidgets.QMessageBox()
                     msg.setIcon(QtWidgets.QMessageBox.Critical)
                     msg.setText("                     Error                    ")
                     msg.setInformativeText('Option requires at least two points')
                     msg.exec_()
-                else:   
-                    while i<=(len(choosen)-1):
-                        if float((choosen[i].attributes())[0])==float((choosen[0].attributes())[1]):
-                            last_x=float((choosen[-1].attributes())[1])
-                            area=area+(float((choosen[1].attributes())[1])-last_x)*float((choosen[0].attributes())[2])
-                        elif choosen[i]==choosen[-1]:
-                            first_x=float((choosen[0].attributes())[1])
-                            area=area+(first_x-float((choosen[-1].attributes())[2]))*float((choosen[-1].attributes())[2])
-                        else:
-                            delta_x=float((choosen[i+1].attributes())[1])-float((choosen[i-1].attributes())[1])
-                            area=area+delta_x*float((choosen[i].attributes())[2])
-                        i=i+1
-                        if area<0:
-                            area=area*-1
-                        self.label_description_of_score.setText('Area of the designated area is')
-                    if self.radioButtona_meters.isChecked():
-                        self.label_score.setText(f'{(area/2):.3f} m')
-                    elif self.radioButtona_ares.isChecked():
-                        self.label_score.setText(f'{(area/200):.2f} a')
-                    elif self.radioButtona_hectares.isChecked():
-                        self.label_score.setText(f'{(area/20000):.4f} ha')
+            else:
+                while i<=(len(choosen)-1):
+                    if choosen[0].attributes()[0]==choosen[i].attributes()[0]:
+                        ''
                     else:
-                        self.label_description_of_score.setText('')
-                        self.label_score.setText('')
-                        msg = QtWidgets.QMessageBox()
-                        msg.setIcon(QtWidgets.QMessageBox.Critical)
-                        msg.setText("                     Error                    ")
-                        msg.setInformativeText('You have to select units of area!!!')
-                        msg.exec_()
+                        delta_h=float((choosen[i].attributes())[3])-float((choosen[0].attributes())[3])
+                        iface.messageBar().pushMessage(f'the difference between points {choosen[0].attributes()[0]} and {choosen[i].attributes()[0]} is {delta_h:.3f}')
+                    i=i+1
+                iface.messageBar().pushSuccess( 'Succes','Action performed successfully' )
+            self.label_score.setText('Result is in the command line') 
 
+        elif self.radioButton_area.isChecked():
+            layer = iface.activeLayer()
+            choosen = layer.selectedFeatures()
+            choosen = sorted(choosen, key=lambda f: f['id'])
+            area=0
+            i=0
+            if len(choosen)<3:
+                iface.messageBar().pushMessage('Please choose more points')   
+                msg = QtWidgets.QMessageBox()
+                msg.setIcon(QtWidgets.QMessageBox.Critical)
+                msg.setText("                     Error                    ")
+                msg.setInformativeText('Option requires at least two points')
+                msg.exec_()
+            else:   
+                while i<=(len(choosen)-1):
+                    if choosen[i]==choosen[0]:
+                        last_x=float((choosen[-1].attributes())[1])
+                        area=area+(float((choosen[1].attributes())[1])-last_x)*float((choosen[0].attributes())[2])
+                    elif choosen[i]==choosen[-1]:
+                        first_x=float((choosen[0].attributes())[1])
+                        area=area+(first_x-float((choosen[-1].attributes())[1]))*float((choosen[-1].attributes())[2])
+                    else:
+                        delta_x=float((choosen[i+1].attributes())[1])-float((choosen[i-1].attributes())[1])
+                        area=area+delta_x*float((choosen[i].attributes())[2])
+                    i=i+1
+                    if area<0:
+                        area=area*-1
+                    self.label_description_of_score.setText('Area of the designated area is')
+                if self.radioButtona_meters.isChecked():
+                    self.label_score.setText(f'{(area/2):.3f} m')
+                elif self.radioButtona_ares.isChecked():
+                    self.label_score.setText(f'{(area/200):.2f} a')
+                elif self.radioButtona_hectares.isChecked():
+                    self.label_score.setText(f'{(area/20000):.4f} ha')
+                else:
+                    self.label_description_of_score.setText('')
+                    self.label_score.setText('')
+                    msg = QtWidgets.QMessageBox()
+                    msg.setIcon(QtWidgets.QMessageBox.Critical)
+                    msg.setText("                     Error                    ")
+                    msg.setInformativeText('You have to select units of area!!!')
+                    msg.exec_()
 
-                if self.radioButton_system.isChecked():
-                    if self.radioButton_pl1992.isChecked():
-                        # Pobierz aktualnie zaznaczone obiekty z warstwy
-                        layer = self.mMapLayerComboBox_layers.currentLayer()
-                        selected_features = layer.selectedFeatures()
+        if self.radioButton_polygon.isChecked():
+            if self.mRasterBandComboBox_systems.currentText()=='PL1992':
+                crs='EPSG:2180'
+            elif self.mRasterBandComboBox_systems.currentText()=='PL2000 - Zone 5':
+                crs='EPSG:2176'
+            elif self.mRasterBandComboBox_systems.currentText()=='PL2000 - Zone 6':
+                crs='EPSG:2177'
+            elif self.mRasterBandComboBox_systems.currentText()=='PL2000 - Zone 7':
+                crs='EPSG:2178'
+            elif self.mRasterBandComboBox_systems.currentText()=='PL2000 - Zone 8':
+                crs='EPSG:2179'
+            selected_features = iface.activeLayer().selectedFeatures()
+            new_layer = QgsVectorLayer("Polygon?crs="+crs, "Poligon", "memory")
+            provider = new_layer.dataProvider()
+            fields = provider.fields()
+            new_layer.startEditing()
+            selected_features_sorted = sorted(selected_features, key=lambda f: f['id'])
+            polygon_points = []
+            for feature in selected_features_sorted:
+                geom = feature.geometry()
+                polygon_points.append(geom.asPoint())
+            polygon = QgsGeometry.fromPolygonXY([polygon_points])
+            new_feature = QgsFeature()
+            new_feature.setGeometry(polygon)
+            new_layer.addFeature(new_feature)
+            new_layer.commitChanges()
+            QgsProject.instance().addMapLayer(new_layer)
 
-                        # Nowy EPSG kod układu odniesienia
-                        new_epsg_code = 2180
+        selected_features=self.mMapLayerComboBox_layers.currentLayer().selectedFeatures()
+        number_of_selected_elements=len(selected_features)
+        self.label_number_of_points.setText(f'{number_of_selected_elements}')
 
-                        crs_src = layer.crs()
-                        crs_dst = QgsCoordinateReferenceSystem(f'EPSG:{new_epsg_code}')
-                        transform_context = QgsProject.instance().transformContext()
-                        coord_transform = QgsCoordinateTransform(crs_src, crs_dst, transform_context)
-
-                        # Zmiana układu odniesienia dla zaznaczonych elementów
-                        layer.startEditing()
-                        for feature in selected_features:
-                            geometry = feature.geometry()
-                            geometry.transform(coord_transform)
-                            layer.changeGeometry(feature, geometry)
-                        layer.commitChanges()
-
-                    elif self.radioButton_pl2000.isChecked():
-                        s=1
-
-
-
-
-            if self.radioButton_polygon.isChecked():
-                line_layer = QgsVectorLayer(f'LineString?crs=epsg:2180', 'Linie', 'memory')
-                provider = line_layer.dataProvider()
-                fields = QgsFields()
-                fields.append(QgsField('ID', QVariant.Double))
-                fields.append(QgsField('X', QVariant.Double))
-                fields.append(QgsField('Y', QVariant.Double))
-                fields.append(QgsField('Z', QVariant.Double))
-                provider.addAttributes(fields)
-                line_layer.updateFields()
-
-                # Uzyskaj od użytkownika punkty do połączenia
-                selected_features = iface.activeLayer().selectedFeatures()
-                layer = self.mMapLayerComboBox_layers.currentLayer()
-                choosen = layer.selectedFeatures()
-
-                # Dodawanie linii do warstwy wektorowej
-                line_features = []
-                i = 0
-                while i < (len(choosen) - 1):
-                    ID = str((choosen[i].attribute('ID')))
-                    X = str((choosen[i].attribute('X')))
-                    Y = str((choosen[i].attribute('Y')))
-                    Z = str((choosen[i].attribute('Z')))
-                    feature = QgsFeature()
-                    feature.setGeometry(QgsGeometry.fromPolyline([QgsPoint(float(X), float(Y), float(Z))]))
-                    feature.setAttributes([str(ID), str(X), str(Y), str(Z)])  # Dodaj współrzędne do atrybutów
-                    line_features.append(feature)
-                    i += 1
-
-                provider.addFeatures(line_features)
-                line_layer.updateExtents()
-
-                # Dodawanie warstwy linii do projektu QGIS
-                QgsProject.instance().addMapLayer(line_layer)
 
 
 
