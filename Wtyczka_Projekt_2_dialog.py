@@ -35,6 +35,7 @@ from qgis.core import QgsProject, QgsGeometry, QgsVectorLayer, QgsFeature, QgsFi
 from PyQt5.QtCore import QVariant
 import csv
 from qgis.gui import QgsVertexMarker
+from qgis.PyQt.QtWidgets import QApplication
 
 # This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
