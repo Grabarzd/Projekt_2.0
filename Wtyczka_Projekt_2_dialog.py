@@ -56,9 +56,9 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
         self.pushButton_clear.clicked.connect(self.clear)
         self.pushButton_add_file.clicked.connect(self.add_file)
         self.pushButton_add_table.clicked.connect(self.table)
-        
+        iface.messageBar().pushSuccess( 'Succes:',f'Thanks for choosing our plugin' )
+    
     def table(self):
-        
         self.tableWidget.setColumnWidth(0,100)
         self.tableWidget.setColumnWidth(1,100)
         self.tableWidget.setColumnWidth(2,100)
@@ -80,6 +80,7 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
             self.tableWidget.setItem(i,2,QtWidgets.QTableWidgetItem(Y))
             self.tableWidget.setItem(i,3,QtWidgets.QTableWidgetItem(Z))
             i=i+1
+        iface.messageBar().pushSuccess( 'Succes:',f'Added date to table' )
 
     def clear(self):
         self.label_score.setText('')
@@ -121,7 +122,7 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
         layer.updateFields()
         self.label_filepath.setText('Choosen filepath:')
         self.label_filepath_2.setText(f'{file_path}')
-
+        
         if self.radioButton_txt.isChecked():
             with open(file_path, 'r') as file:
                 csv_reader = csv.reader(file, delimiter=' ')
@@ -175,10 +176,11 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
                         ''
                     else:
                         delta_h=float((choosen[i].attributes())[3])-float((choosen[0].attributes())[3])
-                        iface.messageBar().pushMessage(f'the difference between points {choosen[0].attributes()[0]} and {choosen[i].attributes()[0]} is {delta_h:.3f}')
+                        iface.messageBar().pushMessage(f'the difference between points {choosen[0].attributes()[0]} and {choosen[i].attributes()[0]} is {delta_h:.3f} m')
                     i=i+1
-                iface.messageBar().pushSuccess( 'Succes','Action performed successfully' )
+            iface.messageBar().pushSuccess( 'Succes','Action performed successfully' )
             self.label_score.setText('Result is in the command line') 
+
 
         elif self.radioButton_area.isChecked():
             layer = iface.activeLayer()
@@ -222,6 +224,7 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
                     msg.setText("                     Error                    ")
                     msg.setInformativeText('You have to select units of area!!!')
                     msg.exec_()
+            iface.messageBar().pushSuccess( 'Succes','Action performed successfully' )
 
         if self.radioButton_polygon.isChecked():
             if self.mRasterBandComboBox_systems.currentText()=='PL1992':
@@ -250,6 +253,7 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
             new_layer.addFeature(new_feature)
             new_layer.commitChanges()
             QgsProject.instance().addMapLayer(new_layer)
+            iface.messageBar().pushSuccess( 'Succes','Action performed successfully' )
 
         selected_features=self.mMapLayerComboBox_layers.currentLayer().selectedFeatures()
         number_of_selected_elements=len(selected_features)
