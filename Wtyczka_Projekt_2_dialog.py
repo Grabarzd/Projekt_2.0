@@ -95,6 +95,7 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
             self.tableWidget.setItem(i,2,QtWidgets.QTableWidgetItem(empty))
             self.tableWidget.setItem(i,3,QtWidgets.QTableWidgetItem(empty))
             i=i+1
+        self.label_filepath_2.setText('')
         iface.messageBar().pushInfo('Clear','Console cleaning performed correctly')
 
     def add_file(self):
