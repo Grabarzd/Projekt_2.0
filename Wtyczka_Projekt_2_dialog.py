@@ -110,53 +110,57 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
         elif self.mRasterBandComboBox_systems.currentText()=='PL2000 - Zone 8':
             crs='EPSG:2179'
         file_path = QFileDialog.getOpenFileName(self, 'Open file')[0]
-        self.label_filepath.setText(f'{file_path}')
-        layer_name = 'Punkty'
-        fields = QgsFields()
-        fields.append(QgsField('ID', QVariant.Double))
-        fields.append(QgsField('X', QVariant.Double))
-        fields.append(QgsField('Y', QVariant.Double))   
-        fields.append(QgsField('Z', QVariant.Double))
-        layer = QgsVectorLayer('Point?crs=' + crs, layer_name, 'memory')
-        provider = layer.dataProvider()
-        provider.addAttributes(fields)
-        layer.updateFields()
-        self.label_filepath.setText('Choosen filepath:')
-        self.label_filepath_2.setText(f'{file_path}')
+        try:
+            self.label_filepath.setText(f'{file_path}')
+            layer_name = 'Punkty'
+            fields = QgsFields()
+            fields.append(QgsField('ID', QVariant.Double))
+            fields.append(QgsField('X', QVariant.Double))
+            fields.append(QgsField('Y', QVariant.Double))   
+            fields.append(QgsField('Z', QVariant.Double))
+            layer = QgsVectorLayer('Point?crs=' + crs, layer_name, 'memory')
+            provider = layer.dataProvider()
+            provider.addAttributes(fields)
+            layer.updateFields()
+            self.label_filepath.setText('Choosen filepath:')
+            self.label_filepath_2.setText(f'{file_path}')
         
-        if self.radioButton_txt.isChecked():
-            with open(file_path, 'r') as file:
-                csv_reader = csv.reader(file, delimiter=' ')
-                next(csv_reader)
-                i=0
-                for row in csv_reader:
-                    y = float(row[0])
-                    x = float(row[1])
-                    z = float(row[2])
-                    i=i+1
-                    point = QgsPointXY(x, y)
-                    feature = QgsFeature()
-                    feature.setGeometry(QgsGeometry.fromPointXY(point))
-                    feature.setAttributes([str(i),x, y, z])
-                    provider.addFeature(feature)
-        elif self.radioButton_csv.isChecked():
-            with open(file_path, 'r') as file:
-                csv_reader = csv.reader(file, delimiter=',')
-                next(csv_reader)
-                for row in csv_reader:
-                    if len(row) >= 4:
-                        id = row[0]
-                        y = float(row[1])
-                        x = float(row[2])
-                        z = float(row[3])
+            
+            if self.radioButton_txt.isChecked():
+                with open(file_path, 'r') as file:
+                    csv_reader = csv.reader(file, delimiter=' ')
+                    next(csv_reader)
+                    i=0
+                    for row in csv_reader:
+                        y = float(row[0])
+                        x = float(row[1])
+                        z = float(row[2])
+                        i=i+1
                         point = QgsPointXY(x, y)
                         feature = QgsFeature()
                         feature.setGeometry(QgsGeometry.fromPointXY(point))
-                        feature.setAttributes([str(id), x, y, z])
+                        feature.setAttributes([str(i),x, y, z])
                         provider.addFeature(feature)
-        layer.updateExtents()
-        QgsProject.instance().addMapLayer(layer)
-        iface.messageBar().pushSuccess( 'Succes:',f'Added file {file_path}' )
+            elif self.radioButton_csv.isChecked():
+                with open(file_path, 'r') as file:
+                    csv_reader = csv.reader(file, delimiter=',')
+                    next(csv_reader)
+                    for row in csv_reader:
+                        if len(row) >= 4:
+                            id = row[0]
+                            y = float(row[1])
+                            x = float(row[2])
+                            z = float(row[3])
+                            point = QgsPointXY(x, y)
+                            feature = QgsFeature()
+                            feature.setGeometry(QgsGeometry.fromPointXY(point))
+                            feature.setAttributes([str(id), x, y, z])
+                            provider.addFeature(feature)
+            layer.updateExtents()
+            QgsProject.instance().addMapLayer(layer)
+            iface.messageBar().pushSuccess( 'Succes:',f'Added file {file_path}' )
+        except FileNotFoundError:
+            self.label_filepath.setText('File not selected!')
 
     def option(self):
         if self.radioButton_height.isChecked():
