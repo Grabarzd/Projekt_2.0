@@ -40,6 +40,7 @@ The main goal of the project is to create a plug compatible with QGIS software. 
 --------------------
 
 The file generated in the plugin in the first column is the ID from the given point, the second X coordinate, the third Y coordinate and the third Z coordinate.
+The plugin supports only data for attributes consisting of ID,X,Y,Z. Otherwise, the program will show an error or the calculation results will be wrong.
 
 In the .txt file, do not enter the number of the point and the header, it is defined automatically. The coordinates are separated by spaces, and if there is an extra space, the program will display an error.
 
@@ -87,7 +88,7 @@ id,x,y,z
 
 - Operating system: Windows 10/11
 - Python version 3.9
-- QGIS version 3.30
+- QGIS version 3.30 or 3.28
 
 ### Installation process
 --------------------
