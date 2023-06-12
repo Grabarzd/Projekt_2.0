@@ -1,86 +1,133 @@
-# Projekt 2
-## Projekt: "Wtyczka do QGIS - PyQGIS"
-### Jak działa i do czego służy?
+# Project 2
+## Project: "QGIS plugin - PyQGIS"
+### How does it work and what is it for?
 --------------------
-Głównym celem projektu jest stworzenie wytczki kompatyblinej z opragromowaniem QGIS. Wtyczka pozwoli użytkownikowi użyć kilku przydatnych funkcjonalności w programie QGIS. Poniżej znajduje się lista możliwości jakie posiada aplikacja?:  
+The main goal of the project is to create a plug compatible with QGIS software. The plugin will allow the user to use some useful functionalities in QGIS. Below is a list of the possibilities that the application has:
 
-- Obliczenie różnicy wysokości pomiędzy dwoma zadanymi punktami:
-	- Użytkownik może wybrać dwa punkty na aktywnej warstwie.
-	- Wtyczka oblicza różnicę wysokości między tymi punktami.
-	- Wynik zostaje wyświetlony na pasku informacyjnym interfejsu QGIS.
-	- W razie wyboru pojedynczego punktu, wtyczka zwróci błąd.
+- Calculation of height difference between two given points:
+	- The plugin calculates the height difference between these points.
+	- The result is displayed in the information bar of the QGIS interface.
+	- If a single point is selected, the plug-in will return an error.
+	- If no points are selected, the plugin will return an error.
 
-- Obliczenie pola powierzchni dla conajmiej trzech wybranych punktów:
-	- Użytkownik może wybrać minimum trzy punkty na aktywnej warstwie.
-	- Wtyczka oblicza pole powierzchni figury na podstawie tych punktów metodą Gaussa.
-	- Wynik zostaje wyświetlony na pasku informacyjnym interfejsu QGIS.
-	- W razie wyboru dwóch punktów, wtyczka zwróci błąd.
+- Calculation of the surface area for at least three selected points:
+	- The plugin calculates the area of a figure based on these points using the Gaussian method.
+	- The result is displayed in the information bar of the QGIS interface.
+	- If you select two points, the plugin will return an error.
+	- If no points are selected, the plugin will return an error.
 
 
-### Dodatkowe opcje
+### Additional options
 --------------------
-- Opracowanie pliku wewnątrz wtyczki:
-	- Użytkownik może wskazać układ współrzędnych [1992 lub 2000] pliku do wgrania.
-	- Możliwość wybrania i otwarcia pliku tekstowego [.txt lub .csv].
-	- Zawartość pliku zostaje załadowana do pamięci podręcznej aplikacji i umieszczona w tabeli (QTableWidget).
-	- Dodanie warstwy w odpowiednim układzie odniesienia [EPSG] do bieżącego projektu QGIS.
+- Development of the file inside the plugin:
+	- The user can indicate the PL1992 or PL2000 plane coordinate system of the file to be uploaded.
+	- In the PL2000 system, it is possible to select the zone [15 degrees - 24 degrees]
+	- Ability to select and open a text file [.txt or .csv].
+	- The content of the file is loaded into the application cache and placed in a table (QTableWidget).
+	- Added layer in proper datum [EPSG] to current QGIS project.
 
-- Rysowanie poligonu na podstawie zaznaczonych punktów i obliczenie pola powierzchni:
-	- Użytkownik może wybrać punkty na aktywnej warstwie, aby utworzyć poligon.
-	- Wtyczka rysuje ten poligon i dodaje go do nowej warstwy w projekcie QGIS.
-	- Sprawdzenie atrybutu geometry().area() dla porównania z obliczonym polem powierzchni.
-
-- Czyszczenie konsoli wynikowej i zaznaczenia obiektów na żądanie użytkownika.
-
-- Wybór opcji wyświetlania pola powierzchni w m2, arach lub ha zgodnie z wyborem użytkownika.
+- Drawing a polygon based on selected points and calculating the area:
+	- User can select points on active layer to create polygon.
+	- The plugin draws this polygon and adds it to a new layer in the QGIS project.
+	- If no points are selected, the plugin will return an error.
 
 
+- Clearing the result console and object selections on user's request.
 
+- Selection of the option to display the area in m2, ares or ha according to the user's choice.
 
-### Proces instalacyjny
---------------------
-
-1. Pobierz wtyczkę z [url]
-
-2. Otwórz program QGIS.
-
-3. Przejdź do menu "Wtyczki" > "Zarządzaj i zainstaluj wtyczki...".
-
-[ZDJ]
-
-4. Wybierz opcję "Załaduj wtyczkę z pliku..." i wskaż pobrany plik wtyczki.
-
-[ZDJ]
-
-5. Po załadowaniu wtyczki, zostanie ona aktywowana i widoczna w panelu bocznym lub menu QGIS.
-
-[ZDJ]
-
-
-### Obsługa wtyczki
+### Example of a txt/csv file
 --------------------
 
--Obliczenie różnicy wysokości
+In the .txt file, do not enter the point ID and the header. The coordinates are separated by spaces, and if there is an extra space, the program will display an error.
 
-[GIF]
+##### .txt file
+```bash
+0 0 100
+200 0 700
+250 100 600
+200 300 500
+-100 300 400
+150 100 300
+0 100 200
+```
 
--Obliczenie pola powierzchni
+In the .csv file, we must provide the numerical point ID and include the header. The coordinates are separated by commas, if the file format is incorrect, the program will load the file, but not the coordinates.
 
-[GIF]
+##### .csv file
+```bash
+id,x,y,z
+1,0,0,100
+2,200,0,700
+3,250,100,600
+4,200,300,500
+5,-100,300,400
+6,150,100,300
+7,0,100,200
+```
 
--Import danych z pliku [.txt lub .csv]
+### Plugin conditions
+--------------------
 
-[GIF]
+- In order to calculate the area, the points must be entered in a clockwise direction.
 
--Dodanie danych do tabeli
+- Differences in the height of points are counted in accordance with the order of the indexes.
 
-[gif]
+- When adding points from a file or creating a polygon, it creates a new temporary layer
 
--Rysowanie poliganu na podstawie punktów
+- Adding data to the table is conditioned according to the index order
 
-[GIF]
+- When using the "Add file" option, no file was selected, the program will display "No file selected"
 
--Monit oraz czyszczenie konsoli
+### System requirements
 
-[GIF]
+- Operating system: Windows 10/11
+- Python version 3.9
+- QGIS version 3.30
 
+### Installation process
+--------------------
+
+1. Download plugin from [url]
+
+2. Open QGIS.
+
+3. Go to "Plugins" > "Manage and Install Plugins...".
+
+<img src="https://i.imgur.com/jKS1MVq.png">
+
+4. Select "Load plugin from file..." and select the downloaded plugin file.
+
+<img src="https://i.imgur.com/l8hqrLX.png">
+
+5. Once the plugin is loaded, it will be activated and visible in the side panel or QGIS menu.
+
+<img src="https://i.imgur.com/7WA4vAC.png">
+
+
+### Plugin support
+--------------------
+
+-Calculation of height difference
+
+<img src="https://j.gifs.com/jYwQv4.gif">
+
+-Calculation of the surface area
+
+<img src="https://j.gifs.com/pZDwRy.gif">
+
+-Elaboration of the file inside the plugin
+
+<img src="https://j.gifs.com/nRAQG5.gif">
+
+-Polygan drawing based on points
+
+<img src="https://j.gifs.com/qQERA7.gif">
+
+- Prompt and clear the console
+
+<img src="https://j.gifs.com/vQMqm8.gif">
+
+- Loading data into the table
+
+<img src="https://j.gifs.com/w0N9nr.gif">
