@@ -507,7 +507,10 @@ p, li { white-space: pre-wrap; }
     </font>
    </property>
    <property name="title">
-    <string>Import data from file</string>
+    <string>Import data from file:</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
    </property>
    <widget class="QLabel" name="label">
     <property name="geometry">
