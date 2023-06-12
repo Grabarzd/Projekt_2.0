@@ -93,7 +93,7 @@ id,x,y,z
 ### Installation process
 --------------------
 
-1. Download plugin from [[Zdalne repozytorium Github]](https://github.com/Grabarzd/Projekt_2.0/tree/main)
+1. Download plugin from [[Remote repository Github]](https://github.com/Grabarzd/Projekt_2.0/tree/main)
 
 	After downloading all plug-in files, move them to a folder named "Wtyczka_Projekt_2" for installation.
 
@@ -129,7 +129,7 @@ id,x,y,z
 
 -Polygan drawing based on points
 
-<img src="https://j.gifs.com/qQERA7.gif">
+<img src="https://j.gifs.com/83y2Yr.gif">
 
 - Prompt and clear the console
 
