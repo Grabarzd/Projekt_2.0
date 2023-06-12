@@ -1,0 +1,208 @@
+\documentclass[a4paper,titleauthor]{mwart} 
+\usepackage{polski}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx} %pakiet do wstawiania grafiki
+\usepackage[hyphens]{url} %pakiet do wstawiania linkow
+%\usepackage[hidelinks,breaklinks]{hyperref}
+\usepackage{authblk}%pakiet do tworzenia afiliacji
+\usepackage{tabularx}%pakiet do tabel
+\usepackage[a4paper, left=2cm, right=2cm, top=3cm, bottom=3cm]{geometry}
+\usepackage{listings}
+\usepackage{placeins}%pakiet do kontroli umieszczania obiektow
+\usepackage{hyperref}%pakiet do m.in. kolorowania linkow
+\usepackage{fancyhdr}
+\usepackage{float} 
+\usepackage{hyperref}
+\usepackage[tablegrid,owncaptions]{vhistory}
+\usepackage{subfigure}
+\usepackage{listings}
+\usepackage{wrapfig}
+\usepackage{supertabular}
+\usepackage{}
+\usepackage[polish]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{caption}
+\renewcommand\figurename{Rys.}%skrocony podpis
+\renewcommand\lstlistingname{Wydruk}
+
+
+%------------------------------------------------------------------------
+% Dane do strony tytułowej
+% Początek dokumentu
+\begin{document}
+
+\thispagestyle{empty}
+\begin{center}{\sc \Large
+Politechnika Warszawska\\
+}\par\vspace{0.2cm}\par
+{\large
+Wydział Geodezji i Kartografii\\
+Kierunek Geodezja i Kartografia
+
+}\end{center}
+\vspace{5cm}
+\begin{center}
+
+{\LARGE
+ Informatyka geodezyjna\\
+\textbf{Projekt numer 2}\\
+
+Prowadzący:\\
+mgr inż. Andrzej Szeszko\\
+
+}
+\end{center}
+\vspace{4cm}
+\begin{flushright}
+
+{\large
+Autorzy:\\
+Karol Pawłowski 319354 \\
+Mateusz Radko 319363\\
+Dominik Sawczuk 319372\\
+
+Grupa 3b\\
+}
+\end{flushright}
+\vfill
+\begin{center}
+Warszawa 2023
+\end{center}
+
+%---------------------------------------------------------------
+\newpage
+
+ %Automatycznie generowany spis treści
+\tableofcontents
+\newpage
+%------------------------------------------------
+\section{Cel ćwiczenia} 
+
+Wykorzystując język programowania Python oraz hostingowy serwis internetowy prowadzony w serwisie \href{https://github.com/Grabarzd/Projekt_2.0.git}{GitHub}, mamy za zadanie stworzyć wtyczke do programu \textbf{QGIS}.\\
+    \subsection{Minimalne funkcjonalności wtyczki obejmują:}
+        \paragraph{Opracowanie danych z poziomu wtyczki po wgraniu do projektu QGIS:}
+        \begin{itemize}
+            \item Użytkownik ma możliwość wyboru dwóch punktów z aktywnej warstwy.
+            \item Następnie zostaje obliczona różnica wysokości między tymi punktami.
+            \item Wynik różnicy wysokości zostaje podany na pasku informacyjnym interfejsu QGIS za pomocą funkcji iface.messageBar().pushMessage() lub w inny sposób tekstowy np. "Różnica wysokości między punktami o numerach PKT1 i PKT2 wynosi: WYNIK [m]".
+        \end{itemize}
+
+        \paragraph{Opracowanie danych z wyboru minimum trzech punktów z warstwy:}
+        \begin{itemize}
+            \item Użytkownik ma możliwość wyboru co najmniej trzech punktów z warstwy.
+            \item Następnie zostaje obliczone pole powierzchni na podstawie współrzędnych zaznaczonych punktów metodą Gaussa.
+            \item Wynik obliczonego pola powierzchni zostaje podany na pasku informacyjnym interfejsu QGIS za pomocą funkcji iface.messageBar().pushMessage() lub w inny sposób tekstowy np. "Pole powierzchni figury o wierzchołkach w punktach o numerach PKT1, PKT2... wynosi: WYNIK [m2]".
+            \item Monit w przypadku zaznaczenia zbyt małej liczby punktów do wykonania obliczeń.
+        \end{itemize}
+
+       
+
+    \subsection{Dodatkowa opcje wtyczki obejmują:}
+        \paragraph{Opracowanie pliku wewnątrz wtyczki:}
+        \begin{itemize}
+            \item Użytkownik może wskazać, w jakim układzie współrzędnych będzie plik do wgrania: 1992 czy 2000 (+ strefa).
+            \item Istnieje możliwość wyboru i otwarcia pliku tekstowego w formacie .txt lub .csv.
+            \item Zawartość pliku zostaje wczytana do pamięci podręcznej aplikacji i umiejscowiona w tabeli (QTableWidget).
+            \item Dodana zostaje warstwa w odpowiednim układzie odniesienia (EPSG) do bieżącego projektu QGIS.
+        \end{itemize}
+        \paragraph{Na podstawie zaznaczonych punktów do obliczenia pola powierzchni, wtyczka rysuje poligon, dodaje go do nowej warstwy projektu i sprawdza atrybut geometry().area() dla porównania.}
+        \paragraph{Wtyczka umożliwia czyszczenie konsoli wynikowej oraz zaznaczenia obiektów na żądanie użytkownika.}
+        \paragraph{Użytkownik ma możliwość wyboru, czy pole powierzchni ma być wyświetlane w metrach kwadratowych (m2), arach (ar) czy hektarach (ha). Wynik obliczeń jest wyświetlany zgodnie z wyborem}
+
+\section{Wymagania systemowe}
+W celu wykonania wtyczki zalecane jest wykorzystanie systemu operacyjego \textbf{Windows 11}, \textbf{QGIS 3.30} oraz opragramowania \textbf{python v3.9} wraz z zainstalowaną bibioteką \textbf{PyQt5}.
+
+\section{Część teoretyczna ćwiczenia}
+    \paragraph{Charakterystyka funkcji}
+    \begin{itemize}
+        \item \textbf{calculate\_height\_diff}-- funkcja przeliczająca przywyższenie pomiędzy wybranymi puktami na podstawię różnic wsp. Z i zapisuję otrzymaną wartość w [m]
+        \item \textbf{calculate\_field}-- dunkcja obliczająca pole powierzchni na podstawię narysowanego poligonu przy pomocy funkcji \textbf{create\_polygon}, kturego punktami granicami są wybrane punkty. W tym celu funkcja wykorzystuje metodę \textbf{Gaussa}. Za zapis wyniku w poniższych jednostkach odpowiada funkcja \textbf{compare\_area} .
+        \begin{itemize}
+            \item \textbf{m$^2$} -- metrach kwadratowych
+            \item  \textbf{ar} -- arach
+            \item  \textbf{km$^2$} -- kilometrach kwadratowych
+        \end{itemize}
+        \begin{flushright}
+        \cite{poleGaussa}
+
+    \end{flushright}
+    \end{itemize}
+
+    \paragraph{PyQt5}
+    PyQt5--to pełne API dla wieloplatformowej biblioteki Qt. Moduł PyQt5 umożliwia tworzenie funkcjonalnych aplikacji desktopowych dla systemów MS Windows, Mac OS czy Linux/Unix. PyQt to zestaw powiązań Pythona dla graficznych wieloplatformowych aplikacji, łączy w sobie wszystkie zalety Qt i Python. W PyQt mozna wykorzystać biblioteki Qt w kodzie Pythona, umożliwiające pisanie aplikacji GUI w Pythonie. Innymi słowami, PyQt umożliwia dostęp do wszystkich funkcji dostarczanych przez Qt za pomocą kodu Pythona. PyQt zależy od uruchamiania bibliotek Qt, w chwili instalacji PyQt,wymagana jest również wymagana wersja Qt instalowane automatycznie na komputerze użytkownika .
+    \begin{flushright}
+        \cite{PyQt5}
+    \end{flushright}
+
+    
+    \paragraph{Wymagane biblioteki z pakietu PyQt5}
+    
+    \begin{itemize}
+        \item QtWidgets- jeden z modułów biblioteki Qt, który dostarcza zestaw gotowych komponentów GUI, takich jak przyciski, pola tekstowe, etykiety, listy rozwijane i wiele innych.
+
+        \item QtCore- podstawowe klasy Qt, posiada funkcjonalności nie będące częścią interfejsu graficznego
+
+        \item QtGui- podstawowe klasy wspólne dla GUI widgetów i OpenGL, jest to moduł zawirający wszystkie elementy graficzne
+        
+        \item qgis.PyQt- biblioteka programistyczna, która umożliwia tworzenie interfejsów graficznych użytkownika (GUI) dla aplikacji opartych na QGIS (Quantum GIS) przy użyciu języka Python i frameworku PyQt.
+    \end{itemize}
+    \begin{flushright}
+        \cite{biblioteki}
+    \end{flushright}
+
+
+
+    \section{Przebieg ćwiczenia}
+    Ćwiczenie rozpoczęliśmy od utworzenia zdalnego repozytorium przez jednego członka z grupy i udostępnienia dostępu do repozytorium pozostałym członką .\\
+    Po utworzeniu zdalnego repozytorium została stworzone wizualna część wtyczki w programie \textbf{QtDesinger}, która była edytowana na bieżąco podczas pisania kodu. \\
+
+    \paragraph{Właściwości wtyczki}
+
+    \begin{itemize}
+     
+         \item Oblicza różnice wysokości pomiędzy punktami(pomiędzy punktem pierwszym i drugim, następnie jeśli takowe występują pomiędzy pierwszym i kolejnymi, a numeracja punktów jest uzależniona od nr Id punktu) wybranymi przez użytkownika z aktywnej warstwy i obliczone przewyższenie zwraca na pasku interfejsu QGIS. 
+         \item Oblicza pole powierzchni dla conajmniej trzech punktów, wybranych przez użytkownika z aktywnej warstwy. W celu obiczenia pola powierzchni wtyczka wykorzystuje \textit{Metodę Gaussa}i obliczone pole zwraca na pasku interfejsu QGIS w wybranych przez użytkownika jednostkach. Ponadto zwraca błąd jeśli zostanie wybrana zbyt mała liczba punktów.
+         \item Opracowanie pliku wewnątrz wtyczki.Użytkownik może wskazać układ współrzędnych [1992 lub 2000] pliku do wgrania, dodatkowo ma możliwość otwarcia pliku tekstowego [.txt lub .csv], którego zawartość zostaje załadowana do pamięci podręcznej aplikacji i umieszczona w tabeli (QTableWidget).Ponadto wtyczka posiada możliwość dodania warstwy w odpowiednim układzie odniesienia [EPSG] do bieżącego projektu QGIS.
+         \item Rysowanie poligonu na podstawie zaznaczonych punktów i obliczenie pola powierzchni. Użytkownik może wybrać punkty na aktywnej warstwie, aby utworzyć poligon, następnie wtyczka rysuje ten poligon i dodaje go do nowej warstwy w projekcie QGIS. Dodatkowo istnieje możliwość sprawdzenia atrybutu geometry().area() dla porównania z obliczonym polem powierzchni.
+    
+    \end{itemize}
+    
+    dopisz dodatkowo windows 10/qgis3.28
+    
+    Wtyczka została napisana na urządzeniu obsługującym system operacyjny Windows 11, za pomocą języka python w wersji 3.9, oraz QGIS 3.30. Ponadto wtyczka została sprawdzona na na urządzeniu obsługującym system operacyjny Windows 10, oraz programie QGIS 3.28 i stwierdzona została zgodność z tak owymi systemami.\\
+    Ponadto plik z danymi musi zawierać współrzędne i być utworzony w takiej samej strukturze jak przykładowy plik z danymi w \textbf{README}, ponieważ obliczenia nie zostaną wykonane lub zostaną wykonane i otrzymamy błędne wyniki. 
+    
+    \paragraph{Problemy napotkane podczas ćwiczenia:}
+
+    \begin{itemize}
+     
+         \item Występujące błędy podczas próby zainicjowania wtyczki w QGIS, rozwiązaliśmy to poprzez wykorzystanie komend \textbf{try} oraz \textbf{except} które po wykryciu opisanego błędu wskazują potencjalną przyczynę występowania problemu.
+         \item Wtyczka nie utworzy kolejnego poligonu jeśli użytkownik nie wybierze ponownie punktów.
+         \item W wyniku wybrania formatu danych w postaci \textit{.txt}, a zostanie wczytany plik w formacie \textit{.csv} zostanie wywołany błąd, ktury uniemożliwi działanie wtyczki. Ten sam błąd zostanie zainicjowany w przeciwnym przypadku, jeśli wybierzemy plik w postaci \textit{.csv},a wczytami plik w formacie \textit{.txt}.
+    
+    \end{itemize}
+
+\section{Wnioski}
+Praca nad projetem zwiększyła nasze umiejętnoności z korzystania ze {\href{https://github.com/Grabarzd/Projekt_2.0.git}{zdalnego repozytorium} w serwisie \textit{GitHub}, dzięki któremu praca nad wtyczką stała się sprawniejsza. Mogliśmy podzielić obowiązki w grupie, co przyspieszyło tempo i efektywność pracy, ponieważ każda edycja pliku była widoczna. Dodatkowo nauczyliśmy się obsługi biblioteki \textit{PyQt5}.
+\newline
+Ponadto udało nam się zwiększyć umiejętności w:
+\begin{itemize}
+    \item pisaniu kodu obiektowego w Pythonie
+    \item implementowaniu algorytmów pochodzących ze źródeł zewnętrznych
+    \item tworzeniu dokumentów w latex
+    \item korzystanie z programu QGIS oraz realizowanie interfejsu w Qtdesigner
+\end{itemize}
+\vspace{1cm}
+
+
+
+
+
+
+\centering\Large{\href{https://github.com/Grabarzd/Projekt_2.0.git}{$\rightarrow$ Przekierowanie do repozytorium $\leftarrow$}
+
+\bibliographystyle{plain}
+\bibliography{biblio}
+
+
+\end{document}
