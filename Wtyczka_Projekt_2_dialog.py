@@ -56,7 +56,6 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
         self.pushButton_clear.clicked.connect(self.clear)
         self.pushButton_add_file.clicked.connect(self.add_file)
         self.pushButton_add_table.clicked.connect(self.table)
-        iface.messageBar().pushSuccess( 'Succes:',f'Thanks for choosing our plugin' )
     
     def table(self):
         self.tableWidget.setColumnWidth(0,100)
@@ -71,7 +70,7 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
         self.tableWidget.setColumnCount(4)
         i=0
         while i<(len(choosen)):
-            id=str((choosen[i].attributes())[0])
+            id=str(int((choosen[i].attributes())[0]))
             Y=str((choosen[i].attributes())[1])
             X=str((choosen[i].attributes())[2])
             Z=str((choosen[i].attributes())[3])
@@ -97,7 +96,8 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
             i=i+1
         self.label_filepath_2.setText('')
         iface.messageBar().pushInfo('Clear','Console cleaning performed correctly')
-
+        self.label_score_2.setText('')
+        
     def add_file(self):
         if self.mRasterBandComboBox_systems.currentText()=='PL1992':
             crs='EPSG:2180'
@@ -140,7 +140,10 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
                         feature = QgsFeature()
                         feature.setGeometry(QgsGeometry.fromPointXY(point))
                         feature.setAttributes([str(i),x, y, z])
-                        provider.addFeature(feature)
+                        provider.addFeature(feature) 
+                if  file_path[-3:]=='csv':
+                    layer = QgsProject.instance().mapLayersByName('Nazwa_warstwy')[0]
+                    QgsProject.instance().removeMapLayer(layer)
             elif self.radioButton_csv.isChecked():
                 with open(file_path, 'r') as file:
                     csv_reader = csv.reader(file, delimiter=',')
@@ -156,6 +159,9 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
                             feature.setGeometry(QgsGeometry.fromPointXY(point))
                             feature.setAttributes([str(id), x, y, z])
                             provider.addFeature(feature)
+                    if  file_path[-3:]=='txt':
+                        layer = QgsProject.instance().mapLayersByName('Nazwa_warstwy')[0]
+                        QgsProject.instance().removeMapLayer(layer)
             layer.updateExtents()
             QgsProject.instance().addMapLayer(layer)
             iface.messageBar().pushSuccess( 'Succes:',f'Added file {file_path}' )
@@ -176,15 +182,22 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
                     msg.setInformativeText('Option requires at least two points')
                     msg.exec_()
             else:
+                data=''
                 while i<=(len(choosen)-1):
                     if choosen[0].attributes()[0]==choosen[i].attributes()[0]:
                         ''
                     else:
                         delta_h=float((choosen[i].attributes())[3])-float((choosen[0].attributes())[3])
-                        iface.messageBar().pushMessage(f'the difference between points {choosen[0].attributes()[0]} and {choosen[i].attributes()[0]} is {delta_h:.3f} m')
+                        data=data+(f'{i}. The difference between points {int(choosen[0].attributes()[0])} and {int(choosen[i].attributes()[0])} is {delta_h:.3f} m\n')
+                        
                     i=i+1
+                msg = QtWidgets.QMessageBox()
+                msg.setIcon(QtWidgets.QMessageBox.Information)
+                msg.setText("                                        Score            ")
+                msg.setInformativeText(data)
+                msg.exec_()
             iface.messageBar().pushSuccess( 'Succes','Action performed successfully' )
-            self.label_score.setText('Result is in the command line') 
+            self.label_description_of_score.setText('Calculation results in the newly opened window') 
 
 
         elif self.radioButton_area.isChecked():
@@ -253,12 +266,21 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
                 geom = feature.geometry()
                 polygon_points.append(geom.asPoint())
             polygon = QgsGeometry.fromPolygonXY([polygon_points])
+            #polygon = QgsGeometry.fromPolygonXY(selected_features_sorted)
             new_feature = QgsFeature()
             new_feature.setGeometry(polygon)
+            #new_feature.geometry().area()
+            if self.radioButtona_meters.isChecked():
+                    self.label_score_2.setText(f'{(new_feature.geometry().area()):.3f} m')
+            elif self.radioButtona_ares.isChecked():
+                self.label_score_2.setText(f'{(new_feature.geometry().area()/100):.2f} a')
+            elif self.radioButtona_hectares.isChecked():
+                self.label_score_2.setText(f'{(new_feature.geometry().area()/10000):.4f} ha')
             new_layer.addFeature(new_feature)
             new_layer.commitChanges()
             QgsProject.instance().addMapLayer(new_layer)
             iface.messageBar().pushSuccess( 'Succes','Action performed successfully' )
+            
 
         selected_features=self.mMapLayerComboBox_layers.currentLayer().selectedFeatures()
         number_of_selected_elements=len(selected_features)
