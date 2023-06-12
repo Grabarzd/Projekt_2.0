@@ -58,15 +58,15 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
         self.pushButton_add_table.clicked.connect(self.table)
     
     def table(self):
-     """
-     The 'table' function generates a table in the plugin dialog.
-     
-     INPUT:
-     Points selected by the user or data from a file.
-     
-     OUTPUT:
-     Graphical representation of the coordinates in the table.
-     """
+        """
+        The 'table' function generates a table in the plugin dialog.
+         
+        INPUT:
+        Points selected by the user or data from a file.
+         
+        OUTPUT:
+        Graphical representation of the coordinates in the table.
+        """
         self.tableWidget.setColumnWidth(0,100)
         self.tableWidget.setColumnWidth(1,100)
         self.tableWidget.setColumnWidth(2,100)
@@ -91,15 +91,15 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
         iface.messageBar().pushSuccess( 'Succes:',f'Added date to table' )
 
     def clear(self):
-     """
-     The 'clear' function clears the table window with data, score, number of points and the path of the uploaded file from the data.
-     
-     INPUT:
-     Table data, score, number of points, filepath.
-     
-     OUTPUT:
-     The dialogs in the plugin have been cleared.
-     """
+        """
+        The 'clear' function clears the table window with data, score, number of points and the path of the uploaded file from the data.
+         
+        INPUT:
+        Table data, score, number of points, filepath.
+         
+        OUTPUT:
+        The dialogs in the plugin have been cleared.
+        """
         self.label_score.setText('')
         self.label_description_of_score.setText('')
         self.label_number_of_points.setText('')
@@ -117,19 +117,19 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
         self.label_score_2.setText('')
         
     def add_file(self):
-     """
-     The 'add_file' function allows the user to upload data 
-     from a file and transform the data into the PL1992 or PL2000 system. 
-     In the 2000 system there is a possibility to select a zone. 
-     Adding a file is additionally conditioned by the choice of the .txt or .csv file extension, 
-     which slightly changes the appearance of the input file.
-     
-     INPUT:
-     The file path selected by the user.
-     
-     OUTPUT:
-     Data has been loaded in the selected coordinate system.
-     """
+        """
+        The 'add_file' function allows the user to upload data 
+        from a file and transform the data into the PL1992 or PL2000 system. 
+        In the 2000 system there is a possibility to select a zone. 
+        Adding a file is additionally conditioned by the choice of the .txt or .csv file extension, 
+        which slightly changes the appearance of the input file.
+         
+        INPUT:
+        The file path selected by the user.
+         
+        OUTPUT:
+        Data has been loaded in the selected coordinate system.
+        """
         if self.mRasterBandComboBox_systems.currentText()=='PL1992':
             crs='EPSG:2180'
         elif self.mRasterBandComboBox_systems.currentText()=='PL2000 - Zone 5':
@@ -200,27 +200,27 @@ class Projekt2Dialog(QtWidgets.QDialog, FORM_CLASS):
             self.label_filepath.setText('File not selected!')
 
     def option(self):
-     """
-     The 'option' function is divided into 3 different computational possibilities
-       
-       INPUT:
-       Points selected by user or uploaded from file.
-       
-     - Using the 'High diffrence' option calculates height differences based on user selected points.
-          
-       OUTPUT:
-       Returns the height difference between points.
-       
-     - Using the 'Area' option, you can calculate the area for selected points. The user can select the measurement unit for the field [m2, a, ha].
-     
-       OUTPUT:
-       Returns the area value in the selected unit.
-       
-     - Using the 'Create polygon' option, based on the selected coordinates, generates a polygon on a new temporary layer.
-     
-       OUTPUT:
-       Generates a polygon in graphical form.
-     """
+        """
+        The 'option' function is divided into 3 different computational possibilities
+           
+          INPUT:
+          Points selected by user or uploaded from file.
+           
+        - Using the 'High diffrence' option calculates height differences based on user selected points.
+              
+          OUTPUT:
+          Returns the height difference between points.
+           
+        - Using the 'Area' option, you can calculate the area for selected points. The user can select the measurement unit for the field [m2, a, ha].
+         
+          OUTPUT:
+          Returns the area value in the selected unit.
+           
+        - Using the 'Create polygon' option, based on the selected coordinates, generates a polygon on a new temporary layer.
+        
+          OUTPUT:
+          Generates a polygon in graphical form.
+        """
         if self.radioButton_height.isChecked():
   
             layer = iface.activeLayer()
