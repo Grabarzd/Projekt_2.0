@@ -39,7 +39,9 @@ The main goal of the project is to create a plug compatible with QGIS software. 
 ### Example of a txt/csv file
 --------------------
 
-In the .txt file, do not enter the point ID and the header. The coordinates are separated by spaces, and if there is an extra space, the program will display an error.
+The file generated in the plugin in the first column is the ID from the given point, the second X coordinate, the third Y coordinate and the third Z coordinate.
+
+In the .txt file, do not enter the number of the point and the header, it is defined automatically. The coordinates are separated by spaces, and if there is an extra space, the program will display an error.
 
 ##### .txt file
 ```bash
@@ -73,11 +75,13 @@ id,x,y,z
 
 - Differences in the height of points are counted in accordance with the order of the indexes.
 
-- When adding points from a file or creating a polygon, it creates a new temporary layer
+- The polygon is generated in the order of the indexes.
 
-- Adding data to the table is conditioned according to the index order
+- When adding points from a file or creating a polygon, it creates a new temporary layer.
 
-- When using the "Add file" option, no file was selected, the program will display "No file selected"
+- Adding data to the table is conditioned according to the index order.
+
+- When using the "Add file" option, no file was selected, the program will display "No file selected".
 
 ### System requirements
 
@@ -88,7 +92,9 @@ id,x,y,z
 ### Installation process
 --------------------
 
-1. Download plugin from [url]
+1. Download plugin from [[Zdalne repozytorium Github]](https://github.com/Grabarzd/Projekt_2.0/tree/main)
+
+	After downloading all plug-in files, move them to a folder named "Wtyczka_Projekt_2" for installation.
 
 2. Open QGIS.
 
@@ -96,7 +102,7 @@ id,x,y,z
 
 <img src="https://i.imgur.com/jKS1MVq.png">
 
-4. Select "Load plugin from file..." and select the downloaded plugin file.
+4. Select "Load plugin from file..." and select the downloaded plugin file with the .zip extension.
 
 <img src="https://i.imgur.com/l8hqrLX.png">
 
